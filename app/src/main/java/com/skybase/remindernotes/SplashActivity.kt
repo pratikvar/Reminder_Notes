@@ -4,6 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.skybase.remindernotes.view.NoteActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
 
@@ -11,8 +15,11 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-        var intent = Intent(this, NoteActivity::class.java)
-        startActivity(intent)
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(500)
+            val intent = Intent(this@SplashActivity, NoteActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }

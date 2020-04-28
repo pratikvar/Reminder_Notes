@@ -15,7 +15,7 @@ import com.skybase.remindernotes.view.NoteActivity
 object NotificationCenter {
 
     fun sendNoteReminderNotification(context: Context, noteId: Int) {
-        val note = NoteRepository.getNoteForId(noteId) ?: return
+        val note = NoteRepository.getNoteModelForId(noteId) ?: return
 
         val notificationManager: NotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
