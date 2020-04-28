@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.skybase.humanizer.DateHumanizer" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="note"
+            type="com.skybase.remindernotes.viewmodel.NoteModel" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin4">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@{note.displayColor}"
+            android:padding="@dimen/padding8">
+
+            <ImageView
+                android:id="@+id/iv_pinned"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_pinned"
+                android:visibility="@{note.pinned ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toTopOf="@+id/tv_body"
+                app:layout_constraintEnd_toStartOf="@id/tv_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{note.title}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_body"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iv_pinned"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@tools:sample/first_names" />
+
+            <TextView
+                android:id="@+id/tv_body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:minLines="1"
+                android:text="@{note.body}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:layout_constraintBottom_toTopOf="@+id/tv_reminder_info"
+                app:layout_constraintEnd_toEndOf="@id/tv_title"
+                app:layout_constraintStart_toStartOf="@id/iv_pinned"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                tools:text="@tools:sample/lorem/random" />
+
+            <TextView
+                android:id="@+id/tv_reminder_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin6"
+                android:text="@{note.displayReminder}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:visibility="@{note.reminderAdded?View.VISIBLE :View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_body"
+                tools:text="@tools:sample/date/ddmmyy" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_overlap_icons"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@{note.displayColor}"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_option_pin"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:scaleType="centerInside"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toStartOf="@id/iv_option_share"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:srcCompat="@drawable/ic_pin_note" />
+
+                <ImageView
+                    android:id="@+id/iv_option_share"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:scaleType="centerInside"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toStartOf="@id/iv_option_delete"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@id/iv_option_pin"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_share_note" />
+
+                <ImageView
+                    android:id="@+id/iv_option_delete"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:scaleType="centerInside"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@id/iv_option_share"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_delete_note" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

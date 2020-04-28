@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_medium">14sp</dimen>
+    <dimen name="text_size_large">16sp</dimen>
+    <dimen name="text_size_dialog_title">20sp</dimen>
+
+
+    <dimen name="margin_2">2dp</dimen>
+
+    <dimen name="margin_4">4dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin2">2dp</dimen>
+
+    <dimen name="margin4">4dp</dimen>
+    <dimen name="margin6">6dp</dimen>
+    <dimen name="margin8">8dp</dimen>
+    <dimen name="margin12">12dp</dimen>
+    <dimen name="padding2">2dp</dimen>
+
+    <dimen name="padding4">4dp</dimen>
+    <dimen name="padding6">6dp</dimen>
+    <dimen name="padding8">8dp</dimen>
+    <dimen name="padding12">12dp</dimen>
+
+</resources>

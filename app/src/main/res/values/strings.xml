@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">Reminder Notes</string>
+
+    <!--Initial Note Data-->
+    <string name="note_one_title">First Note</string>
+    <string name="note_one_body">This is your first note details. Do long press on note for options</string>
+    <string name="note_second_title">Second Color Note</string>
+    <string name="note_second_body">This is your second color note details with large body. Isn\'t it great</string>
+    <string name="note_third_title">Third Color Note</string>
+    <string name="note_third_body">This is your third reminder note details. You will get reminder about this note at %s</string>
+
+    <!--Note Filter-->
+    <string name="note_title">Your Reminder Notes</string>
+    <string name="filter_show_normal_title">Normal</string>
+    <string name="filter_show_reminder_title">Reminder</string>
+    <string name="filter_show_purple_title">Purple</string>
+    <string name="filter_show_blue_title">Blue</string>
+    <string name="filter_show_teal_title">Teal</string>
+    <string name="filter_show_gray_title">Gray</string>
+    <string name="filter_show_green_title">Green</string>
+    <string name="filter_show_red_title">Red</string>
+    <string name="filter_show_yellow_title">Yellow</string>
+
+    <!--Note Color String-->
+    <string name="note_color_purple">purple</string>
+    <string name="note_color_blue">blue</string>
+    <string name="note_color_teal">teal</string>
+    <string name="note_color_gray">gray</string>
+    <string name="note_color_green">green</string>
+    <string name="note_color_red">red</string>
+    <string name="note_color_yellow">yellow</string>
+
+    <!--New Note-->
+    <string name="note_title_hint">Add Note Title Here</string>
+    <string name="note_save">Save</string>
+    <string name="intent_extra_id">note_id</string>
+    <string name="note_reminder_info">Reminder on %s</string>
+    <string name="validation_new_note">Note Should Not Be Empty</string>
+    <string name="note_start_typing">Start Typing</string>
+
+    <!--Mics-->
+    <string name="note_reminder_triggered">note_reminder</string>
+    <string name="notification_channel_id_reminder">1</string>
+    <string name="notification_channel_name_reminder">Reminder Notifications</string>
+    <string name="notification_channel_id_mics">2</string>
+    <string name="notification_channel_name_mics">General Notifications</string>
+
+</resources>

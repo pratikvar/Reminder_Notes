@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.skybase.humanizer.DateHumanizer" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="note"
+            type="com.skybase.remindernotes.viewmodel.NoteModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        tools:context=".view.NewNoteActivity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_title"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/white"
+            android:elevation="@dimen/cardview_default_elevation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/et_note_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:gravity="start|center_vertical"
+                android:paddingStart="@dimen/padding8"
+                android:paddingEnd="@dimen/padding8"
+                android:hint="@string/note_title_hint"
+                android:inputType="textCapWords"
+                android:maxLength="25"
+                android:singleLine="true"
+                android:text="@={note.title}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/layout_scroll"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@{note.displayColor}"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toTopOf="@id/layout_bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_title">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_margin="@dimen/margin6"
+                android:gravity="start|top"
+                android:hint="@string/note_start_typing"
+                android:inputType="textMultiLine|textCapSentences"
+                android:scrollbars="vertical"
+                android:text="@={note.body}" />
+
+        </ScrollView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_bottom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:paddingStart="@dimen/padding6"
+            android:paddingEnd="@dimen/padding6"
+            android:paddingBottom="@dimen/padding6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_scroll">
+
+            <ImageView
+                android:id="@+id/iv_reminder_warning"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="@dimen/margin6"
+                android:layout_marginEnd="@dimen/margin6"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_reminder_warning"
+                android:visibility="@{note.reminderAdded &amp;&amp; !note.reminderDateValid ? View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_reminder_info"
+                app:layout_constraintEnd_toStartOf="@id/tv_reminder_info"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_reminder_info" />
+
+            <TextView
+                android:id="@+id/tv_reminder_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin6"
+                android:text="@{String.format(@string/note_reminder_info,note.displayReminder)}"
+                android:textColor="@{note.reminderDateValid ? @color/note_valid_color : @color/note_invalid_color}"
+                android:visibility="@{note.reminderAdded ? View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iv_reminder_warning"
+                app:layout_constraintTop_toBottomOf="@id/layout_color" />
+
+            <HorizontalScrollView
+                android:id="@+id/layout_color"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@id/tv_reminder_info"
+                app:layout_constraintEnd_toStartOf="@id/btn_save"
+                app:layout_constraintHorizontal_weight="2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/btn_reminder"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginStart="@dimen/margin12"
+                        android:layout_marginEnd="@dimen/margin12"
+                        android:src="@drawable/ic_reminder_icon" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_scroll_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/btn_color_gray"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="@dimen/margin12"
+                            android:layout_marginEnd="@dimen/margin12"
+                            android:background="@color/note_gray_200" />
+
+                        <ImageView
+                            android:id="@+id/btn_color_blue"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="@dimen/margin12"
+                            android:layout_marginEnd="@dimen/margin12"
+                            android:background="@color/note_blue_200" />
+
+                        <ImageView
+                            android:id="@+id/btn_color_green"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="@dimen/margin12"
+                            android:layout_marginEnd="@dimen/margin12"
+                            android:background="@color/note_green_200" />
+
+                        <ImageView
+                            android:id="@+id/btn_color_purple"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="@dimen/margin12"
+                            android:layout_marginEnd="@dimen/margin12"
+                            android:background="@color/note_purple_200" />
+
+                        <ImageView
+                            android:id="@+id/btn_color_red"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="@dimen/margin12"
+                            android:layout_marginEnd="@dimen/margin12"
+                            android:background="@color/note_red_200" />
+
+                        <ImageView
+                            android:id="@+id/btn_color_teal"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="@dimen/margin12"
+                            android:layout_marginEnd="@dimen/margin12"
+                            android:background="@color/note_teal_200" />
+
+                        <ImageView
+                            android:id="@+id/btn_color_yellow"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="@dimen/margin12"
+                            android:layout_marginEnd="@dimen/margin12"
+                            android:background="@color/note_yellow_200" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin6"
+                android:text="@string/note_save"
+                android:textColor="@android:color/white"
+                android:theme="@style/AppTheme"
+                app:layout_constraintBottom_toBottomOf="@id/layout_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/layout_color"
+                app:layout_constraintTop_toTopOf="@id/layout_color" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
