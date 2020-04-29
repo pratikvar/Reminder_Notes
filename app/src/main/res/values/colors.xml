@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#4745B3</color>
     <color name="colorAccent">#8DC640</color>
 
+    <color name="ic_launcher_background">#80BCEB</color>
+
     <!--Note Colors-->
     <color name="note_purple_200">#CE93D8</color>
     <color name="note_blue_200">#90CAF9</color>
