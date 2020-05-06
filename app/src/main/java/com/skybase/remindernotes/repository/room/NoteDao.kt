@@ -17,10 +17,13 @@ interface NoteDao {
     fun insertAllNote(note: List<Note>)
 
     @Query("SELECT * FROM Note WHERE Id=:noteId")
-    fun getNoteForIdLive(noteId: Int): LiveData<NoteModel>
+    fun getNoteModelForIdLive(noteId: Int): LiveData<NoteModel>
 
     @Query("SELECT * FROM Note WHERE Id=:noteId")
-    fun getNoteForId(noteId: Int): NoteModel?
+    fun getNoteModelForId(noteId: Int): NoteModel?
+
+    @Query("SELECT * FROM Note WHERE Id=:noteId")
+    fun getNoteForId(noteId: Int): Note?
 
     @Query(
         "SELECT * FROM Note " +

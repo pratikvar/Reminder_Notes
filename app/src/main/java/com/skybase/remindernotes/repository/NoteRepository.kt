@@ -8,12 +8,16 @@ import com.skybase.remindernotes.viewmodel.NoteModel
 
 object NoteRepository {
 
-    fun getNoteForId(noteId: Int): NoteModel? {
+    fun getNoteModelForId(noteId: Int): NoteModel? {
+        return getNoteDao().getNoteModelForId(noteId)
+    }
+
+    fun getNoteForId(noteId: Int): Note? {
         return getNoteDao().getNoteForId(noteId)
     }
 
-    fun getNoteForIdLive(noteId: Int): LiveData<NoteModel> {
-        return getNoteDao().getNoteForIdLive(noteId)
+    fun getNoteModelForIdLive(noteId: Int): LiveData<NoteModel> {
+        return getNoteDao().getNoteModelForIdLive(noteId)
     }
 
     fun getAllNotesLive(): LiveData<List<NoteModel>> {

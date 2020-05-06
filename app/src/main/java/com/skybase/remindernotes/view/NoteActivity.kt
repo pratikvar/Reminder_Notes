@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.skybase.remindernotes.R
 import com.skybase.remindernotes.databinding.ActivityNoteBinding
 import com.skybase.remindernotes.repository.NoteRepository
@@ -18,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class NoteActivity : AppCompatActivity(), NoteActivityAdapter.OnNoteInteractionListener {
@@ -111,7 +113,21 @@ class NoteActivity : AppCompatActivity(), NoteActivityAdapter.OnNoteInteractionL
 
     override fun onNoteDeleteClicked(noteModel: NoteModel?) {
         CoroutineScope(Dispatchers.IO).launch {
-            NoteRepository.deleteNote(noteId = noteModel!!.Id!!.toInt())
+            val note = NoteRepository.getNoteForId(noteModel!!.Id!!.toInt())
+            NoteRepository.deleteNote(noteId = noteModel.Id!!.toInt())
+
+            withContext(Dispatchers.Main) {
+                Snackbar.make(mBinding.root, "Note Deleted", Snackbar.LENGTH_LONG)
+                    .setAction("Undo") {
+                        undoNoteDelete(note!!)
+                    }.show()
+            }
+        }
+    }
+
+    private fun undoNoteDelete(note: Note) {
+        CoroutineScope(Dispatchers.IO).launch {
+            NoteRepository.insertNote(note)
         }
     }
 

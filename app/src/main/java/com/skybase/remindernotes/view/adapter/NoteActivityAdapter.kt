@@ -1,16 +1,14 @@
 package com.skybase.remindernotes.view.adapter
 
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Slide
-import androidx.transition.TransitionManager
 import com.skybase.remindernotes.R
 import com.skybase.remindernotes.databinding.ListitemNoteBinding
 import com.skybase.remindernotes.viewmodel.NoteModel
+
 
 class NoteActivityAdapter(var interactionListener: OnNoteInteractionListener) :
     RecyclerView.Adapter<NoteActivityAdapter.NoteViewHolder>() {
@@ -61,27 +59,21 @@ class NoteActivityAdapter(var interactionListener: OnNoteInteractionListener) :
             return@setOnLongClickListener true;
         }
 
+//        TransitionManager.beginDelayedTransition(
+//            holder.binding.layoutOverlapIcons,
+//            Slide(Gravity.BOTTOM)
+//        )
     }
 
     private fun toggleOptionLayout(holder: NoteViewHolder) {
-        val transition = {
-            TransitionManager.beginDelayedTransition(
-                holder.binding.layoutOverlapIcons,
-                Slide(Gravity.BOTTOM)
-            )
-        }
-
         if (holder.binding.layoutOverlapIcons.visibility == View.VISIBLE) {
-            transition()
             holder.binding.layoutOverlapIcons.visibility = View.GONE
         } else {
             if (mSelectedViewHolder != null) {
                 if (mSelectedViewHolder?.binding?.layoutOverlapIcons?.visibility == View.VISIBLE) {
-                    transition()
                     mSelectedViewHolder?.binding?.layoutOverlapIcons?.visibility = View.GONE
                 }
             }
-            transition()
             holder.binding.layoutOverlapIcons.visibility = View.VISIBLE
             mSelectedViewHolder = holder
         }
