@@ -34,6 +34,9 @@ interface NoteDao {
     @Query("SELECT * FROM Note")
     fun getAllNotes(): List<NoteModel>
 
+    @Query("SELECT * FROM Note WHERE reminder IS NOT NULL AND reminder > :nowMillis")
+    suspend fun getNotesWithFutureReminders(nowMillis: Long): List<Note>
+
     @Query("DELETE FROM Note WHERE Id=:noteId")
     fun deleteNote(noteId: Int)
 }

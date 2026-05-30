@@ -10,14 +10,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context?, intent: Intent?) {
+        if (context == null || intent == null) return
 
+        val pendingResult = goAsync()
         CoroutineScope(Dispatchers.Default).launch {
-            if (intent != null && intent.action.equals(context?.resources!!.getString(R.string.note_reminder_triggered))) {
-                val noteId =
-                    intent.getIntExtra(context.resources.getString(R.string.intent_extra_id), 0)
-
-                NotificationCenter.sendNoteReminderNotification(context, noteId)
+            try {
+                val action = context.resources.getString(R.string.note_reminder_triggered)
+                if (intent.action == action) {
+                    val noteId = intent.getIntExtra(
+                        context.getString(R.string.intent_extra_id),
+                        0
+                    )
+                    if (noteId != 0) {
+                        NotificationCenter.sendNoteReminderNotification(context, noteId)
+                    }
+                }
+            } finally {
+                pendingResult.finish()
             }
         }
     }

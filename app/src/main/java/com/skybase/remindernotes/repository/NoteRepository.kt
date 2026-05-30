@@ -36,6 +36,10 @@ object NoteRepository {
         getNoteDao().deleteNote(noteId)
     }
 
+    suspend fun getNotesWithFutureReminders(nowMillis: Long): List<Note> {
+        return getNoteDao().getNotesWithFutureReminders(nowMillis)
+    }
+
     private fun getNoteDao(): NoteDao {
         return RoomDB.getDatabaseInstance().noteDao()
     }

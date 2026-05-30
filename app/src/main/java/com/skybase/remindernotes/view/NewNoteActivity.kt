@@ -10,100 +10,156 @@ import android.view.Window
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.skybase.remindernotes.R
 import com.skybase.remindernotes.databinding.ActivityNewNoteBinding
 import com.skybase.remindernotes.global.util.DateTimeUtil
+import com.skybase.remindernotes.global.util.PermissionDialogs
+import com.skybase.remindernotes.global.util.PermissionHelper
+import com.skybase.remindernotes.global.util.SystemBarHelper
 import com.skybase.remindernotes.global.util.setFiled
 import com.skybase.remindernotes.repository.NoteRepository
 import com.skybase.remindernotes.repository.room.Note
 import com.skybase.remindernotes.viewmodel.NewNoteActivityViewModel
 import com.skybase.remindernotes.viewmodel.NoteModel
-import kotlinx.android.synthetic.main.activity_new_note.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.Calendar
 
 class NewNoteActivity : AppCompatActivity() {
 
-    lateinit var mBinding: ActivityNewNoteBinding
-    lateinit var mViewModel: NewNoteActivityViewModel
+    private lateinit var binding: ActivityNewNoteBinding
+    private lateinit var viewModel: NewNoteActivityViewModel
+    private var currentNote = NoteModel(color = "")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        SystemBarHelper.enableEdgeToEdgeWithLightBackground(this)
         with(window) {
             requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
             enterTransition = Slide(Gravity.TOP)
             exitTransition = Slide(Gravity.BOTTOM)
         }
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_note)
+        binding = ActivityNewNoteBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+
+        if (currentNote.color.isEmpty()) {
+            currentNote = currentNote.copy(color = getString(R.string.note_color_gray))
+        }
 
         getIntentData()
         registerListeners()
     }
 
-    //<editor-fold desc="init">
     private fun getIntentData() {
         val noteId = intent.getIntExtra(resources.getString(R.string.intent_extra_id), 0)
         registerViewModel(noteId)
     }
 
     private fun registerViewModel(noteId: Int) {
-        mViewModel = ViewModelProviders.of(this).get(NewNoteActivityViewModel::class.java)
-        mViewModel.setNoteId(noteId)
-        mViewModel.noteModel.observe(this,
-            Observer { mBinding.note = it ?: NoteModel() })
+        viewModel = ViewModelProvider(this)[NewNoteActivityViewModel::class.java]
+        viewModel.setNoteId(noteId)
+        viewModel.noteModel.observe(this) { model ->
+            currentNote = model ?: NoteModel(color = getString(R.string.note_color_gray))
+            refreshUi(updateTextFields = true)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateReminderPermissionHints()
+    }
+
+    private fun refreshUi(updateTextFields: Boolean) {
+        NoteUiBinder.bindNewNote(binding, currentNote, updateTextFields)
+        updateReminderPermissionHints()
+    }
+
+    private fun updateReminderPermissionHints() {
+        if (!currentNote.isReminderAdded) {
+            binding.tvReminderPermissionHint.visibility = View.GONE
+            return
+        }
+
+        val hints = mutableListOf<String>()
+        if (!PermissionHelper.canScheduleExactAlarms(this)) {
+            hints.add(getString(R.string.permission_reminder_alarm_hint))
+        }
+        if (!PermissionHelper.areNotificationsEnabled(this)) {
+            hints.add(getString(R.string.permission_reminder_notification_hint))
+        }
+
+        if (hints.isEmpty()) {
+            binding.tvReminderPermissionHint.visibility = View.GONE
+        } else {
+            binding.tvReminderPermissionHint.visibility = View.VISIBLE
+            binding.tvReminderPermissionHint.text = hints.joinToString(" ")
+            binding.tvReminderPermissionHint.setOnClickListener {
+                PermissionDialogs.showSettingsChooserForHints(
+                    activity = this,
+                    needsExactAlarm = !PermissionHelper.canScheduleExactAlarms(this),
+                    needsNotifications = !PermissionHelper.areNotificationsEnabled(this)
+                )
+            }
+        }
     }
 
     private fun registerListeners() {
-        btn_save.setOnClickListener {
+        binding.btnSave.setOnClickListener {
             validateAndSaveNote()
         }
-
         setupColorListeners()
         setupDialogListeners()
     }
 
-    //<editor-fold desc="listeners">
-
     private fun setupColorListeners() {
-        val onColorClickListener: View.OnClickListener = View.OnClickListener {
-            mBinding.note!!.color = when (it) {
-                btn_color_blue -> resources.getString(R.string.note_color_blue)
-                btn_color_gray -> resources.getString(R.string.note_color_gray)
-                btn_color_green -> resources.getString(R.string.note_color_green)
-                btn_color_purple -> resources.getString(R.string.note_color_purple)
-                btn_color_red -> resources.getString(R.string.note_color_red)
-                btn_color_teal -> resources.getString(R.string.note_color_teal)
-                btn_color_yellow -> resources.getString(R.string.note_color_yellow)
-                else -> resources.getString(R.string.note_color_gray)
-            }
+        val onColorClickListener = View.OnClickListener {
+            currentNote = currentNote.copy(
+                color = when (it.id) {
+                    R.id.btn_color_blue -> getString(R.string.note_color_blue)
+                    R.id.btn_color_gray -> getString(R.string.note_color_gray)
+                    R.id.btn_color_green -> getString(R.string.note_color_green)
+                    R.id.btn_color_purple -> getString(R.string.note_color_purple)
+                    R.id.btn_color_red -> getString(R.string.note_color_red)
+                    R.id.btn_color_teal -> getString(R.string.note_color_teal)
+                    R.id.btn_color_yellow -> getString(R.string.note_color_yellow)
+                    else -> getString(R.string.note_color_gray)
+                }
+            )
+            refreshUi(updateTextFields = false)
         }
 
-        for (child in layout_scroll_color.children) {
-            if (child is ImageView)
+        for (child in binding.layoutScrollColor.children) {
+            if (child is ImageView) {
                 child.setOnClickListener(onColorClickListener)
+            }
         }
     }
 
     private fun setupDialogListeners() {
         val cal = Calendar.getInstance()
 
-        btn_reminder.setOnClickListener {
-            val datePickerDialog = DatePickerDialog(
-                this, { _, year, month, dayOfMonth ->
+        binding.btnReminder.setOnClickListener {
+            DatePickerDialog(
+                this,
+                { _, year, month, dayOfMonth ->
                     dateSelected(year, month, dayOfMonth)
-                }
-                , cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
-            )
-
-            datePickerDialog.show()
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            ).show()
         }
     }
 
@@ -113,31 +169,32 @@ class NewNoteActivity : AppCompatActivity() {
             .setFiled(Calendar.MONTH, month)
             .setFiled(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-        mBinding.note!!.reminder = cal.timeInMillis
+        currentNote = currentNote.copy(reminder = cal.timeInMillis)
+        refreshUi(updateTextFields = false)
 
-        val timePickerDialog = TimePickerDialog(
-            this, { _, hourOfDay, minute ->
+        TimePickerDialog(
+            this,
+            { _, hourOfDay, minute ->
                 timeSelected(hourOfDay, minute)
-            }, 12, 0, false
-        )
-
-        timePickerDialog.show()
+            },
+            12,
+            0,
+            false
+        ).show()
     }
 
     private fun timeSelected(hourOfDay: Int, minute: Int) {
         val cal = Calendar.getInstance()
-        cal.timeInMillis = mBinding.note!!.reminder ?: Calendar.getInstance().timeInMillis
-
+        cal.timeInMillis = currentNote.reminder ?: Calendar.getInstance().timeInMillis
         cal.setFiled(Calendar.HOUR_OF_DAY, hourOfDay)
             .setFiled(Calendar.MINUTE, minute)
-
-        mBinding.note!!.reminder = cal.timeInMillis
+        currentNote = currentNote.copy(reminder = cal.timeInMillis)
+        refreshUi(updateTextFields = false)
     }
-    //</editor-fold>
 
-    //<editor-fold desc="save note">
     private fun validateAndSaveNote() {
-        if (mBinding.note!!.body.isBlank()) {
+        syncTextFieldsToNote()
+        if (currentNote.body.isBlank()) {
             Toast.makeText(this@NewNoteActivity, R.string.validation_new_note, Toast.LENGTH_SHORT)
                 .show()
         } else {
@@ -147,29 +204,49 @@ class NewNoteActivity : AppCompatActivity() {
         }
     }
 
+    private fun syncTextFieldsToNote() {
+        currentNote = currentNote.copy(
+            title = binding.etNoteTitle.text.toString(),
+            body = binding.etNoteBody.text.toString()
+        )
+    }
+
     private suspend fun saveNote() {
         val pair = getNoteFromNoteModel()
-        val noteId = NoteRepository.insertNote(note = pair.first)
+        val hasValidReminder = pair.first.Reminder != null && pair.second
+        val noteId = NoteRepository.insertNote(note = pair.first).toInt()
 
-        if (pair.first.Reminder != null && pair.second)
-            DateTimeUtil.setAlarmForReminder(pair.first.Reminder!!, noteId = noteId.toInt())
+        var alarmScheduled = true
+        if (hasValidReminder) {
+            alarmScheduled = DateTimeUtil.setAlarmForReminder(pair.first.Reminder!!, noteId)
+        }
 
         withContext(Dispatchers.Main) {
-            Toast.makeText(this@NewNoteActivity, "Note Saved", Toast.LENGTH_SHORT).show()
-            finish()
+            Toast.makeText(this@NewNoteActivity, R.string.note_saved, Toast.LENGTH_SHORT).show()
+
+            val needsExactAlarm = hasValidReminder && !alarmScheduled
+            val needsNotifications =
+                hasValidReminder && !PermissionHelper.areNotificationsEnabled(this@NewNoteActivity)
+
+            if (needsExactAlarm || needsNotifications) {
+                PermissionDialogs.showReminderSetupDialog(
+                    activity = this@NewNoteActivity,
+                    needsExactAlarm = needsExactAlarm,
+                    needsNotifications = needsNotifications,
+                    onComplete = { finish() }
+                )
+            } else {
+                finish()
+            }
         }
     }
 
     private fun getNoteFromNoteModel(): Pair<Note, Boolean> {
-        val noteModel = mBinding.note
-        val note: Note = Note(noteModel!!.Id, noteModel.title, noteModel.body, noteModel.color)
-        note.Reminder = noteModel.reminder
+        val note = Note(currentNote.Id, currentNote.title, currentNote.body, currentNote.color)
+        note.Reminder = currentNote.reminder
         if (note.Title.isBlank()) {
-            note.Title =
-                note.Body.substring(0, if (note.Body.length < 24) note.Body.length else 24)
+            note.Title = note.Body.substring(0, minOf(note.Body.length, 24))
         }
-        return Pair(note, noteModel.isReminderDateValid)
+        return Pair(note, currentNote.isReminderDateValid)
     }
-    //</editor-fold>
-    //</editor-fold>
 }

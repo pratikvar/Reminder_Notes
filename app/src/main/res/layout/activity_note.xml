@@ -1,70 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_base"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window_background"
+    tools:context=".view.NoteActivity">
 
-    <data>
-
-    </data>
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/layout_base"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".view.NoteActivity">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_permission_banner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin6"
+            android:layout_marginTop="@dimen/margin6"
+            android:layout_marginEnd="@dimen/margin6"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/note_invalid_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_toolbar"
-                android:layout_width="0dp"
-                android:layout_height="?attr/actionBarSize"
-                android:paddingStart="@dimen/margin12"
-                android:paddingEnd="@dimen/margin12"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding8">
 
                 <TextView
-                    android:id="@+id/tv_screen_title"
+                    android:id="@+id/tv_permission_message"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/note_title"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:textColor="@color/colorPrimary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_weight="1"
+                    android:textColor="@android:color/white"
+                    android:textSize="13sp"
+                    tools:text="@string/permission_banner_notifications" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_permission_settings"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/permission_banner_action"
+                    android:textColor="@android:color/white" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_notes"
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/window_background"
+            android:paddingStart="@dimen/margin12"
+            android:paddingEnd="@dimen/margin12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_permission_banner">
+
+            <TextView
+                android:id="@+id/tv_screen_title"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_margin="@dimen/margin6"
-                android:layout_marginTop="@dimen/margin6"
-                app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                android:layout_height="wrap_content"
+                android:text="@string/note_title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_toolbar"
-                app:spanCount="2"
-                tools:itemCount="5"
-                tools:listitem="@layout/listitem_note" />
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_add_note"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_fab_plus" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_notes"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/margin6"
+            android:layout_marginTop="@dimen/margin6"
+            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_toolbar"
+            app:spanCount="2"
+            tools:itemCount="5"
+            tools:listitem="@layout/listitem_note" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</layout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/fab_add_note"
+        app:backgroundTint="@color/colorAccent"
+        app:srcCompat="@drawable/ic_fab_plus"
+        app:tint="@android:color/white" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

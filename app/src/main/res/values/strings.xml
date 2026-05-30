@@ -33,10 +33,34 @@
     <!--New Note-->
     <string name="note_title_hint">Add Note Title Here</string>
     <string name="note_save">Save</string>
+    <string name="fab_add_note">Add note</string>
     <string name="intent_extra_id">note_id</string>
     <string name="note_reminder_info">Reminder on %s</string>
-    <string name="validation_new_note">Note Should Not Be Empty</string>
+    <string name="validation_new_note">Please enter some note text before saving.</string>
+    <string name="note_saved">Note saved</string>
     <string name="note_start_typing">Start Typing</string>
+
+    <!-- Permission banners (notes list) -->
+    <string name="permission_banner_notifications">Reminders are saved, but you won\'t get an on-screen alert until notifications are turned on for this app.</string>
+    <string name="permission_banner_alarms">Reminders may not ring at the exact time until you allow alarms for this app in Settings.</string>
+    <string name="permission_banner_action">Review settings</string>
+
+    <!-- Inline hints (edit note) -->
+    <string name="permission_reminder_alarm_hint">This reminder might not go off on time. Tap here for help.</string>
+    <string name="permission_reminder_notification_hint">You won\'t see a pop-up when this reminder is due. Tap here for help.</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_settings">Open Settings</string>
+    <string name="dialog_not_now">Not now</string>
+    <string name="dialog_exact_alarm_title">Allow timed reminders?</string>
+    <string name="dialog_exact_alarm_message">Your note was saved. To ring at the date and time you picked, Reminder Notes needs permission to schedule alarms.\n\nYou can turn this on in Settings, then come back — your note is already saved.</string>
+    <string name="dialog_notification_title">Turn on notifications?</string>
+    <string name="dialog_notification_message">Your note was saved. To show a pop-up when a reminder is due, turn on notifications for Reminder Notes in Settings.</string>
+    <string name="dialog_reminder_setup_title">Finish reminder setup</string>
+    <string name="dialog_reminder_setup_message_both">Your note was saved. To get reminders the way you expect:\n\n• Allow alarms so the reminder fires on time\n• Allow notifications so you see an alert\n\nOpen Settings to fix these, or tap Not now and change them later from the notes list.</string>
+    <string name="dialog_hint_open_settings_message">Choose what you want to update in Settings:</string>
+    <string name="dialog_open_alarm_settings">Alarms</string>
+    <string name="dialog_open_notification_settings">Notifications</string>
 
     <!--Mics-->
     <string name="note_reminder_triggered">note_reminder</string>

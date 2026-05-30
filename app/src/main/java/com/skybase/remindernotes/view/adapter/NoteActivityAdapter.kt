@@ -3,36 +3,33 @@ package com.skybase.remindernotes.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.skybase.remindernotes.R
 import com.skybase.remindernotes.databinding.ListitemNoteBinding
+import com.skybase.remindernotes.view.NoteUiBinder
 import com.skybase.remindernotes.viewmodel.NoteModel
 
-
-class NoteActivityAdapter(var interactionListener: OnNoteInteractionListener) :
+class NoteActivityAdapter(private val interactionListener: OnNoteInteractionListener) :
     RecyclerView.Adapter<NoteActivityAdapter.NoteViewHolder>() {
 
-    var mModelList: List<NoteModel>? = null
-
-    private var mSelectedViewHolder: NoteViewHolder? = null
+    private var modelList: List<NoteModel>? = null
+    private var selectedViewHolder: NoteViewHolder? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        var binding: ListitemNoteBinding = DataBindingUtil.inflate(
+        val binding = ListitemNoteBinding.inflate(
             LayoutInflater.from(parent.context),
-            R.layout.listitem_note, parent, false
+            parent,
+            false
         )
         return NoteViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        val model = mModelList?.get(position)
-        holder.binding.note = model
-
+        val model = modelList?.get(position) ?: return
+        NoteUiBinder.bindListItem(holder.binding, model)
         setupListeners(holder, model)
     }
 
-    private fun setupListeners(holder: NoteViewHolder, model: NoteModel?) {
+    private fun setupListeners(holder: NoteViewHolder, model: NoteModel) {
         holder.binding.root.setOnClickListener { interactionListener.onNoteClicked(model) }
 
         holder.binding.ivOptionPin.setOnClickListener {
@@ -50,52 +47,40 @@ class NoteActivityAdapter(var interactionListener: OnNoteInteractionListener) :
 
         holder.binding.root.setOnLongClickListener {
             toggleOptionLayout(holder)
-            return@setOnLongClickListener true;
+            true
         }
 
         holder.binding.layoutOverlapIcons.setOnClickListener(null)
         holder.binding.layoutOverlapIcons.setOnLongClickListener {
             toggleOptionLayout(holder)
-            return@setOnLongClickListener true;
+            true
         }
-
-//        TransitionManager.beginDelayedTransition(
-//            holder.binding.layoutOverlapIcons,
-//            Slide(Gravity.BOTTOM)
-//        )
     }
 
     private fun toggleOptionLayout(holder: NoteViewHolder) {
         if (holder.binding.layoutOverlapIcons.visibility == View.VISIBLE) {
             holder.binding.layoutOverlapIcons.visibility = View.GONE
         } else {
-            if (mSelectedViewHolder != null) {
-                if (mSelectedViewHolder?.binding?.layoutOverlapIcons?.visibility == View.VISIBLE) {
-                    mSelectedViewHolder?.binding?.layoutOverlapIcons?.visibility = View.GONE
-                }
+            if (selectedViewHolder?.binding?.layoutOverlapIcons?.visibility == View.VISIBLE) {
+                selectedViewHolder?.binding?.layoutOverlapIcons?.visibility = View.GONE
             }
             holder.binding.layoutOverlapIcons.visibility = View.VISIBLE
-            mSelectedViewHolder = holder
+            selectedViewHolder = holder
         }
     }
 
-    override fun getItemCount(): Int {
-        return mModelList?.size ?: 0
-    }
+    override fun getItemCount(): Int = modelList?.size ?: 0
 
-    public fun updateDataSet(updatedList: List<NoteModel>?) {
-        mModelList = updatedList
+    fun updateDataSet(updatedList: List<NoteModel>?) {
+        modelList = updatedList
         notifyDataSetChanged()
     }
 
-    public fun dismissActiveOptionOverlay() {
-        if (mSelectedViewHolder != null) {
-            toggleOptionLayout(mSelectedViewHolder!!)
-        }
+    fun dismissActiveOptionOverlay() {
+        selectedViewHolder?.let { toggleOptionLayout(it) }
     }
 
-    class NoteViewHolder(var binding: ListitemNoteBinding) : RecyclerView.ViewHolder(binding.root) {
-    }
+    class NoteViewHolder(val binding: ListitemNoteBinding) : RecyclerView.ViewHolder(binding.root)
 
     interface OnNoteInteractionListener {
         fun onNoteClicked(noteModel: NoteModel?)
